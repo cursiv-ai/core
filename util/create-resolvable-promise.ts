@@ -7,22 +7,23 @@
  *   - resolve: A function to resolve the Promise with a value of type T.
  *   - reject: A function to reject the Promise with an error.
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function createResolvablePromise<T = any>(): {
-  promise: Promise<T>;
-  resolve: (value: T) => void;
-  reject: (error: unknown) => void;
+  promise: Promise<T>
+  resolve: (value: T) => void
+  reject: (error: unknown) => void
 } {
-  let resolve: (value: T) => void;
-  let reject: (error: unknown) => void;
+  let resolve: (value: T) => void
+  let reject: (error: unknown) => void
 
   const promise = new Promise<T>((res, rej) => {
-    resolve = res;
-    reject = rej;
-  });
+    resolve = res
+    reject = rej
+  })
 
   return {
     promise,
     resolve: resolve!,
     reject: reject!,
-  };
+  }
 }

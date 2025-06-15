@@ -74,6 +74,7 @@ export interface GenerateResult<TOOLS extends ToolSet> {
   readonly toolCalls?: Array<{
     toolCallId: string
     toolName: keyof TOOLS
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     args: any
   }>
 }
@@ -127,6 +128,7 @@ export async function generate<TOOLS extends ToolSet>({
      */
     providerOptions?: ProviderOptions
   }): Promise<GenerateResult<TOOLS>> {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { maxRetries, retry } = prepareRetries({ maxRetries: maxRetriesArg })
   const callSettings = prepareCallSettings(settings)
 

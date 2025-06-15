@@ -1,6 +1,6 @@
-import type { LanguageModelV1StreamPart } from '@ai-sdk/provider';
-import { getPotentialStartIndex } from '../util/get-potential-start-index';
-import type { LanguageModelV1Middleware } from './language-model-v1-middleware';
+import type { LanguageModelV1StreamPart } from '@ai-sdk/provider'
+import { getPotentialStartIndex } from '../util/get-potential-start-index'
+import type { LanguageModelV1Middleware } from './language-model-v1-middleware'
 
 /**
  * Extract an XML-tagged reasoning section from the generated text and exposes it
@@ -15,59 +15,59 @@ export function extractReasoningMiddleware({
   separator = '\n',
   startWithReasoning = false,
 }: {
-  tagName: string;
-  separator?: string;
-  startWithReasoning?: boolean;
+  tagName: string
+  separator?: string
+  startWithReasoning?: boolean
 }): LanguageModelV1Middleware {
-  const openingTag = `<${tagName}>`;
-  const closingTag = `<\/${tagName}>`;
+  const openingTag = `<${tagName}>`
+  const closingTag = `</${tagName}>`
 
   return {
     middlewareVersion: 'v1',
     wrapGenerate: async ({ doGenerate }) => {
-      const { text: rawText, ...rest } = await doGenerate();
+      const { text: rawText, ...rest } = await doGenerate()
 
       if (rawText == null) {
-        return { text: rawText, ...rest };
+        return { text: rawText, ...rest }
       }
 
-      const text = startWithReasoning ? openingTag + rawText : rawText;
+      const text = startWithReasoning ? openingTag + rawText : rawText
 
-      const regexp = new RegExp(`${openingTag}(.*?)${closingTag}`, 'gs');
-      const matches = Array.from(text.matchAll(regexp));
+      const regexp = new RegExp(`${openingTag}(.*?)${closingTag}`, 'gs')
+      const matches = Array.from(text.matchAll(regexp))
 
       if (!matches.length) {
-        return { text, ...rest };
+        return { text, ...rest }
       }
 
-      const reasoning = matches.map(match => match[1]).join(separator);
+      const reasoning = matches.map((match) => match[1]).join(separator)
 
-      let textWithoutReasoning = text;
+      let textWithoutReasoning = text
       for (let i = matches.length - 1; i >= 0; i--) {
-        const match = matches[i];
+        const match = matches[i]
 
-        const beforeMatch = textWithoutReasoning.slice(0, match.index);
+        const beforeMatch = textWithoutReasoning.slice(0, match.index)
         const afterMatch = textWithoutReasoning.slice(
           match.index! + match[0].length,
-        );
+        )
 
         textWithoutReasoning =
           beforeMatch +
           (beforeMatch.length > 0 && afterMatch.length > 0 ? separator : '') +
-          afterMatch;
+          afterMatch
       }
 
-      return { ...rest, text: textWithoutReasoning, reasoning };
+      return { ...rest, text: textWithoutReasoning, reasoning }
     },
 
     wrapStream: async ({ doStream }) => {
-      const { stream, ...rest } = await doStream();
+      const { stream, ...rest } = await doStream()
 
-      let isFirstReasoning = true;
-      let isFirstText = true;
-      let afterSwitch = false;
-      let isReasoning = startWithReasoning;
-      let buffer = '';
+      let isFirstReasoning = true
+      let isFirstText = true
+      let afterSwitch = false
+      let isReasoning = startWithReasoning
+      let buffer = ''
 
       return {
         stream: stream.pipeThrough(
@@ -77,11 +77,11 @@ export function extractReasoningMiddleware({
           >({
             transform: (chunk, controller) => {
               if (chunk.type !== 'text-delta') {
-                controller.enqueue(chunk);
-                return;
+                controller.enqueue(chunk)
+                return
               }
 
-              buffer += chunk.textDelta;
+              buffer += chunk.textDelta
 
               function publish(text: string) {
                 if (text.length > 0) {
@@ -89,53 +89,53 @@ export function extractReasoningMiddleware({
                     afterSwitch &&
                     (isReasoning ? !isFirstReasoning : !isFirstText)
                       ? separator
-                      : '';
+                      : ''
 
                   controller.enqueue({
                     type: isReasoning ? 'reasoning' : 'text-delta',
                     textDelta: prefix + text,
-                  });
-                  afterSwitch = false;
+                  })
+                  afterSwitch = false
 
                   if (isReasoning) {
-                    isFirstReasoning = false;
+                    isFirstReasoning = false
                   } else {
-                    isFirstText = false;
+                    isFirstText = false
                   }
                 }
               }
 
               do {
-                const nextTag = isReasoning ? closingTag : openingTag;
-                const startIndex = getPotentialStartIndex(buffer, nextTag);
+                const nextTag = isReasoning ? closingTag : openingTag
+                const startIndex = getPotentialStartIndex(buffer, nextTag)
 
                 // no opening or closing tag found, publish the buffer
                 if (startIndex == null) {
-                  publish(buffer);
-                  buffer = '';
-                  break;
+                  publish(buffer)
+                  buffer = ''
+                  break
                 }
 
                 // publish text before the tag
-                publish(buffer.slice(0, startIndex));
+                publish(buffer.slice(0, startIndex))
 
                 const foundFullMatch =
-                  startIndex + nextTag.length <= buffer.length;
+                  startIndex + nextTag.length <= buffer.length
 
                 if (foundFullMatch) {
-                  buffer = buffer.slice(startIndex + nextTag.length);
-                  isReasoning = !isReasoning;
-                  afterSwitch = true;
+                  buffer = buffer.slice(startIndex + nextTag.length)
+                  isReasoning = !isReasoning
+                  afterSwitch = true
                 } else {
-                  buffer = buffer.slice(startIndex);
-                  break;
+                  buffer = buffer.slice(startIndex)
+                  break
                 }
-              } while (true);
+              } while (true)
             },
           }),
         ),
         ...rest,
-      };
+      }
     },
-  };
+  }
 }
