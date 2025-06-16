@@ -36,7 +36,7 @@ export class MockEmbeddingModelV1<VALUE> implements EmbeddingModelV1<VALUE> {
   }
 }
 
-export function mockEmbed<VALUE>(
+function mockEmbed<VALUE>(
   expectedValues: Array<VALUE>,
   embeddings: Array<Embedding>,
   usage?: EmbeddingModelUsage,

@@ -2,7 +2,7 @@ export type ReasoningDetail =
   | { type: 'text'; text: string; signature?: string }
   | { type: 'redacted'; data: string };
 
-export function asReasoningText(
+function asReasoningText(
   reasoning: Array<ReasoningDetail>,
 ): string | undefined {
   const reasoningText = reasoning

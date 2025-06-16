@@ -23,7 +23,7 @@ export const toolResultContentSchema: z.ZodType<ToolResultContent> = z.array(
   ]),
 );
 
-export function isToolResultContent(
+function isToolResultContent(
   value: unknown,
 ): value is ToolResultContent {
   if (!Array.isArray(value) || value.length === 0) {

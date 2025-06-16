@@ -1,5 +1,5 @@
-import { NoSuchModelError, ProviderV1 } from '@ai-sdk/provider';
-import { EmbeddingModel, ImageModel, LanguageModel, Provider } from '../types';
+import { NoSuchModelError, ProviderV1 } from '@ai-sdk/provider'
+import { EmbeddingModel, ImageModel, LanguageModel, Provider } from '../types'
 
 /**
  * Creates a custom provider with specified language models, text embedding models, and an optional fallback provider.
@@ -23,64 +23,59 @@ export function customProvider<
   imageModels,
   fallbackProvider,
 }: {
-  languageModels?: LANGUAGE_MODELS;
-  textEmbeddingModels?: EMBEDDING_MODELS;
-  imageModels?: IMAGE_MODELS;
-  fallbackProvider?: ProviderV1;
+  languageModels?: LANGUAGE_MODELS
+  textEmbeddingModels?: EMBEDDING_MODELS
+  imageModels?: IMAGE_MODELS
+  fallbackProvider?: ProviderV1
 }): Provider & {
-  languageModel(modelId: ExtractModelId<LANGUAGE_MODELS>): LanguageModel;
+  languageModel(modelId: ExtractModelId<LANGUAGE_MODELS>): LanguageModel
   textEmbeddingModel(
     modelId: ExtractModelId<EMBEDDING_MODELS>,
-  ): EmbeddingModel<string>;
-  imageModel(modelId: ExtractModelId<IMAGE_MODELS>): ImageModel;
+  ): EmbeddingModel<string>
+  imageModel(modelId: ExtractModelId<IMAGE_MODELS>): ImageModel
 } {
   return {
     languageModel(modelId: ExtractModelId<LANGUAGE_MODELS>): LanguageModel {
       if (languageModels != null && modelId in languageModels) {
-        return languageModels[modelId];
+        return languageModels[modelId]
       }
 
       if (fallbackProvider) {
-        return fallbackProvider.languageModel(modelId);
+        return fallbackProvider.languageModel(modelId)
       }
 
-      throw new NoSuchModelError({ modelId, modelType: 'languageModel' });
+      throw new NoSuchModelError({ modelId, modelType: 'languageModel' })
     },
 
     textEmbeddingModel(
       modelId: ExtractModelId<EMBEDDING_MODELS>,
     ): EmbeddingModel<string> {
       if (textEmbeddingModels != null && modelId in textEmbeddingModels) {
-        return textEmbeddingModels[modelId];
+        return textEmbeddingModels[modelId]
       }
 
       if (fallbackProvider) {
-        return fallbackProvider.textEmbeddingModel(modelId);
+        return fallbackProvider.textEmbeddingModel(modelId)
       }
 
-      throw new NoSuchModelError({ modelId, modelType: 'textEmbeddingModel' });
+      throw new NoSuchModelError({ modelId, modelType: 'textEmbeddingModel' })
     },
 
     imageModel(modelId: ExtractModelId<IMAGE_MODELS>): ImageModel {
       if (imageModels != null && modelId in imageModels) {
-        return imageModels[modelId];
+        return imageModels[modelId]
       }
 
       if (fallbackProvider?.imageModel) {
-        return fallbackProvider.imageModel(modelId);
+        return fallbackProvider.imageModel(modelId)
       }
 
-      throw new NoSuchModelError({ modelId, modelType: 'imageModel' });
+      throw new NoSuchModelError({ modelId, modelType: 'imageModel' })
     },
-  };
+  }
 }
-
-/**
- * @deprecated Use `customProvider` instead.
- */
-export const experimental_customProvider = customProvider;
 
 type ExtractModelId<MODELS extends Record<string, unknown>> = Extract<
   keyof MODELS,
   string
->;
+>

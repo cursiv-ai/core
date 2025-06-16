@@ -174,6 +174,6 @@ export class SseMCPTransport implements MCPTransport {
   }
 }
 
-export function deserializeMessage(line: string): JSONRPCMessage {
+function deserializeMessage(line: string): JSONRPCMessage {
   return JSONRPCMessageSchema.parse(JSON.parse(line))
 }

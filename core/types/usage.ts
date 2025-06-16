@@ -42,7 +42,7 @@ export function calculateLanguageModelUsage({
   };
 }
 
-export function addLanguageModelUsage(
+function addLanguageModelUsage(
   usage1: LanguageModelUsage,
   usage2: LanguageModelUsage,
 ): LanguageModelUsage {

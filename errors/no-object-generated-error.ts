@@ -69,7 +69,7 @@ export class NoObjectGeneratedError extends AISDKError {
   }
 }
 
-export function verifyNoObjectGeneratedError(
+function verifyNoObjectGeneratedError(
   error: unknown,
   expected: {
     message: string;

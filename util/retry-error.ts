@@ -4,7 +4,7 @@ const name = 'AI_RetryError';
 const marker = `vercel.ai.error.${name}`;
 const symbol = Symbol.for(marker);
 
-export type RetryErrorReason =
+type RetryErrorReason =
   | 'maxRetriesExceeded'
   | 'errorNotRetryable'
   | 'abort';
