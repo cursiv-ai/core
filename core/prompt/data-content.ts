@@ -1,14 +1,14 @@
 import {
   convertBase64ToUint8Array,
   convertUint8ArrayToBase64,
-} from '@ai-sdk/provider-utils';
-import { InvalidDataContentError } from './invalid-data-content-error';
-import { z } from 'zod';
+} from '@ai-sdk/provider-utils'
+import { InvalidDataContentError } from './invalid-data-content-error'
+import { z } from 'zod'
 
 /**
 Data content. Can either be a base64-encoded string, a Uint8Array, an ArrayBuffer, or a Buffer.
  */
-export type DataContent = string | Uint8Array | ArrayBuffer | Buffer;
+export type DataContent = string | Uint8Array | ArrayBuffer | Buffer
 
 /**
 @internal
@@ -23,7 +23,7 @@ export const dataContentSchema: z.ZodType<DataContent> = z.union([
       globalThis.Buffer?.isBuffer(value) ?? false,
     { message: 'Must be a Buffer' },
   ),
-]);
+])
 
 /**
 Converts data content to a base64-encoded string.
@@ -33,14 +33,14 @@ Converts data content to a base64-encoded string.
 */
 export function convertDataContentToBase64String(content: DataContent): string {
   if (typeof content === 'string') {
-    return content;
+    return content
   }
 
   if (content instanceof ArrayBuffer) {
-    return convertUint8ArrayToBase64(new Uint8Array(content));
+    return convertUint8ArrayToBase64(new Uint8Array(content))
   }
 
-  return convertUint8ArrayToBase64(content);
+  return convertUint8ArrayToBase64(content)
 }
 
 /**
@@ -53,27 +53,28 @@ export function convertDataContentToUint8Array(
   content: DataContent,
 ): Uint8Array {
   if (content instanceof Uint8Array) {
-    return content;
+    return content
   }
 
   if (typeof content === 'string') {
     try {
-      return convertBase64ToUint8Array(content);
+      return convertBase64ToUint8Array(content)
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       throw new InvalidDataContentError({
         message:
           'Invalid data content. Content string is not a base64-encoded media.',
         content,
         cause: error,
-      });
+      })
     }
   }
 
   if (content instanceof ArrayBuffer) {
-    return new Uint8Array(content);
+    return new Uint8Array(content)
   }
 
-  throw new InvalidDataContentError({ content });
+  throw new InvalidDataContentError({ content })
 }
 
 /**
@@ -84,8 +85,9 @@ export function convertDataContentToUint8Array(
  */
 export function convertUint8ArrayToText(uint8Array: Uint8Array): string {
   try {
-    return new TextDecoder().decode(uint8Array);
+    return new TextDecoder().decode(uint8Array)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
-    throw new Error('Error decoding Uint8Array to text');
+    throw new Error('Error decoding Uint8Array to text')
   }
 }

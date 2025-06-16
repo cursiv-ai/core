@@ -1,8 +1,8 @@
-import { convertUint8ArrayToBase64 } from '@ai-sdk/provider-utils';
+import { convertUint8ArrayToBase64 } from '@ai-sdk/provider-utils'
 import {
   convertToLanguageModelMessage,
   convertToLanguageModelPrompt,
-} from './convert-to-language-model-prompt';
+} from './convert-to-language-model-prompt'
 
 describe('convertToLanguageModelPrompt', () => {
   describe('user message', () => {
@@ -26,13 +26,13 @@ describe('convertToLanguageModelPrompt', () => {
           modelSupportsImageUrls: false,
           modelSupportsUrl: undefined,
           downloadImplementation: async ({ url }) => {
-            expect(url).toEqual(new URL('https://example.com/image.png'));
+            expect(url).toEqual(new URL('https://example.com/image.png'))
             return {
               data: new Uint8Array([0, 1, 2, 3]),
               mimeType: 'image/png',
-            };
+            }
           },
-        });
+        })
 
         expect(result).toEqual([
           {
@@ -45,8 +45,8 @@ describe('convertToLanguageModelPrompt', () => {
               },
             ],
           },
-        ]);
-      });
+        ])
+      })
 
       it('should download images for user image parts with string URLs when model does not support image URLs', async () => {
         const result = await convertToLanguageModelPrompt({
@@ -67,13 +67,13 @@ describe('convertToLanguageModelPrompt', () => {
           modelSupportsImageUrls: false,
           modelSupportsUrl: undefined,
           downloadImplementation: async ({ url }) => {
-            expect(url).toEqual(new URL('https://example.com/image.png'));
+            expect(url).toEqual(new URL('https://example.com/image.png'))
             return {
               data: new Uint8Array([0, 1, 2, 3]),
               mimeType: 'image/png',
-            };
+            }
           },
-        });
+        })
 
         expect(result).toEqual([
           {
@@ -86,9 +86,9 @@ describe('convertToLanguageModelPrompt', () => {
               },
             ],
           },
-        ]);
-      });
-    });
+        ])
+      })
+    })
 
     describe('file parts', () => {
       it('should pass through URLs when the model supports a particular URL', async () => {
@@ -110,7 +110,7 @@ describe('convertToLanguageModelPrompt', () => {
           },
           modelSupportsImageUrls: true,
           modelSupportsUrl: () => true,
-        });
+        })
 
         expect(result).toEqual([
           {
@@ -123,8 +123,8 @@ describe('convertToLanguageModelPrompt', () => {
               },
             ],
           },
-        ]);
-      });
+        ])
+      })
 
       it('should download the URL as an asset when the model does not support a URL', async () => {
         const result = await convertToLanguageModelPrompt({
@@ -146,13 +146,13 @@ describe('convertToLanguageModelPrompt', () => {
           modelSupportsImageUrls: true,
           modelSupportsUrl: () => false,
           downloadImplementation: async ({ url }) => {
-            expect(url).toEqual(new URL('https://example.com/document.pdf'));
+            expect(url).toEqual(new URL('https://example.com/document.pdf'))
             return {
               data: new Uint8Array([0, 1, 2, 3]),
               mimeType: 'application/pdf',
-            };
+            }
           },
-        });
+        })
 
         expect(result).toEqual([
           {
@@ -165,11 +165,11 @@ describe('convertToLanguageModelPrompt', () => {
               },
             ],
           },
-        ]);
-      });
+        ])
+      })
 
       it('should handle file parts with base64 string data', async () => {
-        const base64Data = 'SGVsbG8sIFdvcmxkIQ=='; // "Hello, World!" in base64
+        const base64Data = 'SGVsbG8sIFdvcmxkIQ==' // "Hello, World!" in base64
         const result = await convertToLanguageModelPrompt({
           prompt: {
             type: 'messages',
@@ -188,7 +188,7 @@ describe('convertToLanguageModelPrompt', () => {
           },
           modelSupportsImageUrls: true,
           modelSupportsUrl: undefined,
-        });
+        })
 
         expect(result).toEqual([
           {
@@ -201,11 +201,11 @@ describe('convertToLanguageModelPrompt', () => {
               },
             ],
           },
-        ]);
-      });
+        ])
+      })
 
       it('should handle file parts with Uint8Array data', async () => {
-        const uint8Data = new Uint8Array([72, 101, 108, 108, 111]); // "Hello" in ASCII
+        const uint8Data = new Uint8Array([72, 101, 108, 108, 111]) // "Hello" in ASCII
         const result = await convertToLanguageModelPrompt({
           prompt: {
             type: 'messages',
@@ -224,7 +224,7 @@ describe('convertToLanguageModelPrompt', () => {
           },
           modelSupportsImageUrls: true,
           modelSupportsUrl: undefined,
-        });
+        })
 
         expect(result).toEqual([
           {
@@ -237,8 +237,8 @@ describe('convertToLanguageModelPrompt', () => {
               },
             ],
           },
-        ]);
-      });
+        ])
+      })
 
       it('should download files for user file parts with URL objects when model does not support downloads', async () => {
         const result = await convertToLanguageModelPrompt({
@@ -260,13 +260,13 @@ describe('convertToLanguageModelPrompt', () => {
           modelSupportsImageUrls: false,
           modelSupportsUrl: undefined,
           downloadImplementation: async ({ url }) => {
-            expect(url).toEqual(new URL('https://example.com/document.pdf'));
+            expect(url).toEqual(new URL('https://example.com/document.pdf'))
             return {
               data: new Uint8Array([0, 1, 2, 3]),
               mimeType: 'application/pdf',
-            };
+            }
           },
-        });
+        })
 
         expect(result).toEqual([
           {
@@ -279,8 +279,8 @@ describe('convertToLanguageModelPrompt', () => {
               },
             ],
           },
-        ]);
-      });
+        ])
+      })
 
       it('should download files for user file parts with string URLs when model does not support downloads', async () => {
         const result = await convertToLanguageModelPrompt({
@@ -302,13 +302,13 @@ describe('convertToLanguageModelPrompt', () => {
           modelSupportsImageUrls: false,
           modelSupportsUrl: undefined,
           downloadImplementation: async ({ url }) => {
-            expect(url).toEqual(new URL('https://example.com/document.pdf'));
+            expect(url).toEqual(new URL('https://example.com/document.pdf'))
             return {
               data: new Uint8Array([0, 1, 2, 3]),
               mimeType: 'application/pdf',
-            };
+            }
           },
-        });
+        })
 
         expect(result).toEqual([
           {
@@ -321,8 +321,8 @@ describe('convertToLanguageModelPrompt', () => {
               },
             ],
           },
-        ]);
-      });
+        ])
+      })
 
       it('should download files for user file parts with string URLs when model does not support the particular URL', async () => {
         const result = await convertToLanguageModelPrompt({
@@ -342,16 +342,16 @@ describe('convertToLanguageModelPrompt', () => {
             ],
           },
           modelSupportsImageUrls: false,
-          modelSupportsUrl: url =>
+          modelSupportsUrl: (url) =>
             url.toString() !== 'https://example.com/document.pdf',
           downloadImplementation: async ({ url }) => {
-            expect(url).toEqual(new URL('https://example.com/document.pdf'));
+            expect(url).toEqual(new URL('https://example.com/document.pdf'))
             return {
               data: new Uint8Array([0, 1, 2, 3]),
               mimeType: 'application/pdf',
-            };
+            }
           },
-        });
+        })
 
         expect(result).toEqual([
           {
@@ -364,8 +364,8 @@ describe('convertToLanguageModelPrompt', () => {
               },
             ],
           },
-        ]);
-      });
+        ])
+      })
 
       it('does not download URLs for user file parts for URL objects when model does support the URL', async () => {
         const result = await convertToLanguageModelPrompt({
@@ -385,9 +385,9 @@ describe('convertToLanguageModelPrompt', () => {
             ],
           },
           modelSupportsImageUrls: false,
-          modelSupportsUrl: url =>
+          modelSupportsUrl: (url) =>
             url.toString() === 'https://example.com/document.pdf',
-        });
+        })
 
         expect(result).toEqual([
           {
@@ -400,10 +400,10 @@ describe('convertToLanguageModelPrompt', () => {
               },
             ],
           },
-        ]);
-      });
+        ])
+      })
 
-      it('it should default to downloading the URL when the model does not provider a supportsUrl function', async () => {
+      it('should default to downloading the URL when the model does not provider a supportsUrl function', async () => {
         const result = await convertToLanguageModelPrompt({
           prompt: {
             type: 'messages',
@@ -423,13 +423,13 @@ describe('convertToLanguageModelPrompt', () => {
           modelSupportsImageUrls: false,
           modelSupportsUrl: undefined,
           downloadImplementation: async ({ url }) => {
-            expect(url).toEqual(new URL('https://example.com/document.pdf'));
+            expect(url).toEqual(new URL('https://example.com/document.pdf'))
             return {
               data: new Uint8Array([0, 1, 2, 3]),
               mimeType: 'application/pdf',
-            };
+            }
           },
-        });
+        })
 
         expect(result).toEqual([
           {
@@ -442,8 +442,8 @@ describe('convertToLanguageModelPrompt', () => {
               },
             ],
           },
-        ]);
-      });
+        ])
+      })
 
       it('should handle file parts with filename', async () => {
         const result = await convertToLanguageModelPrompt({
@@ -465,7 +465,7 @@ describe('convertToLanguageModelPrompt', () => {
           },
           modelSupportsImageUrls: true,
           modelSupportsUrl: undefined,
-        });
+        })
 
         expect(result).toEqual([
           {
@@ -479,8 +479,8 @@ describe('convertToLanguageModelPrompt', () => {
               },
             ],
           },
-        ]);
-      });
+        ])
+      })
 
       it('should preserve filename when downloading file from URL', async () => {
         const result = await convertToLanguageModelPrompt({
@@ -503,13 +503,13 @@ describe('convertToLanguageModelPrompt', () => {
           modelSupportsImageUrls: false,
           modelSupportsUrl: () => false,
           downloadImplementation: async ({ url }) => {
-            expect(url).toEqual(new URL('https://example.com/document.pdf'));
+            expect(url).toEqual(new URL('https://example.com/document.pdf'))
             return {
               data: new Uint8Array([0, 1, 2, 3]),
               mimeType: 'application/pdf',
-            };
+            }
           },
-        });
+        })
 
         expect(result).toEqual([
           {
@@ -523,9 +523,9 @@ describe('convertToLanguageModelPrompt', () => {
               },
             ],
           },
-        ]);
-      });
-    });
+        ])
+      })
+    })
 
     describe('provider metadata', async () => {
       it('should add provider metadata to messages', async () => {
@@ -552,7 +552,7 @@ describe('convertToLanguageModelPrompt', () => {
           },
           modelSupportsImageUrls: undefined,
           modelSupportsUrl: undefined,
-        });
+        })
 
         expect(result).toEqual([
           {
@@ -571,11 +571,11 @@ describe('convertToLanguageModelPrompt', () => {
               },
             },
           },
-        ]);
-      });
-    });
-  });
-});
+        ])
+      })
+    })
+  })
+})
 
 describe('convertToLanguageModelMessage', () => {
   describe('user message', () => {
@@ -584,13 +584,13 @@ describe('convertToLanguageModelMessage', () => {
         const result = convertToLanguageModelMessage(
           { role: 'user', content: [{ type: 'text', text: '' }] },
           {},
-        );
+        )
 
         expect(result).toEqual({
           role: 'user',
           content: [],
-        });
-      });
+        })
+      })
 
       it('should pass through non-empty text parts', async () => {
         const result = convertToLanguageModelMessage(
@@ -599,14 +599,14 @@ describe('convertToLanguageModelMessage', () => {
             content: [{ type: 'text', text: 'hello, world!' }],
           },
           {},
-        );
+        )
 
         expect(result).toEqual({
           role: 'user',
           content: [{ type: 'text', text: 'hello, world!' }],
-        });
-      });
-    });
+        })
+      })
+    })
 
     describe('image parts', () => {
       it('should convert image string https url to URL object', async () => {
@@ -621,7 +621,7 @@ describe('convertToLanguageModelMessage', () => {
             ],
           },
           {},
-        );
+        )
 
         expect(result).toEqual({
           role: 'user',
@@ -631,8 +631,8 @@ describe('convertToLanguageModelMessage', () => {
               image: new URL('https://example.com/image.jpg'),
             },
           ],
-        });
-      });
+        })
+      })
 
       it('should convert image string data url to base64 content', async () => {
         const result = convertToLanguageModelMessage(
@@ -646,7 +646,7 @@ describe('convertToLanguageModelMessage', () => {
             ],
           },
           {},
-        );
+        )
 
         expect(result).toEqual({
           role: 'user',
@@ -657,8 +657,8 @@ describe('convertToLanguageModelMessage', () => {
               mimeType: 'image/jpeg',
             },
           ],
-        });
-      });
+        })
+      })
 
       it('should prefer detected mimetype', async () => {
         const result = convertToLanguageModelMessage(
@@ -673,7 +673,7 @@ describe('convertToLanguageModelMessage', () => {
             ],
           },
           {},
-        );
+        )
 
         expect(result).toEqual({
           role: 'user',
@@ -684,9 +684,9 @@ describe('convertToLanguageModelMessage', () => {
               mimeType: 'image/jpeg',
             },
           ],
-        });
-      });
-    });
+        })
+      })
+    })
 
     describe('file parts', () => {
       it('should convert file string https url to URL object', async () => {
@@ -702,7 +702,7 @@ describe('convertToLanguageModelMessage', () => {
             ],
           },
           {},
-        );
+        )
 
         expect(result).toEqual({
           role: 'user',
@@ -713,8 +713,8 @@ describe('convertToLanguageModelMessage', () => {
               mimeType: 'image/jpg',
             },
           ],
-        });
-      });
+        })
+      })
 
       it('should convert file string data url to base64 content', async () => {
         const result = convertToLanguageModelMessage(
@@ -729,7 +729,7 @@ describe('convertToLanguageModelMessage', () => {
             ],
           },
           {},
-        );
+        )
 
         expect(result).toEqual({
           role: 'user',
@@ -740,10 +740,10 @@ describe('convertToLanguageModelMessage', () => {
               mimeType: 'image/jpg',
             },
           ],
-        });
-      });
-    });
-  });
+        })
+      })
+    })
+  })
 
   describe('assistant message', () => {
     describe('text parts', () => {
@@ -765,7 +765,7 @@ describe('convertToLanguageModelMessage', () => {
             ],
           },
           {},
-        );
+        )
 
         expect(result).toEqual({
           role: 'assistant',
@@ -777,9 +777,9 @@ describe('convertToLanguageModelMessage', () => {
               toolName: 'toolName',
             },
           ],
-        });
-      });
-    });
+        })
+      })
+    })
 
     describe('reasoning parts', () => {
       it('should pass through provider metadata', () => {
@@ -800,7 +800,7 @@ describe('convertToLanguageModelMessage', () => {
             ],
           },
           {},
-        );
+        )
 
         expect(result).toEqual({
           role: 'assistant',
@@ -816,8 +816,8 @@ describe('convertToLanguageModelMessage', () => {
               },
             },
           ],
-        });
-      });
+        })
+      })
 
       it('should support a mix of reasoning, redacted reasoning, and text parts', () => {
         const result = convertToLanguageModelMessage(
@@ -843,7 +843,7 @@ describe('convertToLanguageModelMessage', () => {
             ],
           },
           {},
-        );
+        )
 
         expect(result).toEqual({
           role: 'assistant',
@@ -865,9 +865,9 @@ describe('convertToLanguageModelMessage', () => {
               text: 'hello, world!',
             },
           ],
-        });
-      });
-    });
+        })
+      })
+    })
 
     describe('tool call parts', () => {
       it('should pass through provider metadata', () => {
@@ -890,7 +890,7 @@ describe('convertToLanguageModelMessage', () => {
             ],
           },
           {},
-        );
+        )
 
         expect(result).toEqual({
           role: 'assistant',
@@ -908,9 +908,9 @@ describe('convertToLanguageModelMessage', () => {
               },
             },
           ],
-        });
-      });
-    });
+        })
+      })
+    })
 
     describe('file parts', () => {
       it('should convert file data correctly', async () => {
@@ -926,7 +926,7 @@ describe('convertToLanguageModelMessage', () => {
             ],
           },
           {},
-        );
+        )
 
         expect(result).toEqual({
           role: 'assistant',
@@ -937,8 +937,8 @@ describe('convertToLanguageModelMessage', () => {
               mimeType: 'application/pdf',
             },
           ],
-        });
-      });
+        })
+      })
 
       it('should preserve filename when present', async () => {
         const result = convertToLanguageModelMessage(
@@ -954,7 +954,7 @@ describe('convertToLanguageModelMessage', () => {
             ],
           },
           {},
-        );
+        )
 
         expect(result).toEqual({
           role: 'assistant',
@@ -966,8 +966,8 @@ describe('convertToLanguageModelMessage', () => {
               filename: 'test-document.pdf',
             },
           ],
-        });
-      });
+        })
+      })
 
       it('should handle provider metadata', async () => {
         const result = convertToLanguageModelMessage(
@@ -988,7 +988,7 @@ describe('convertToLanguageModelMessage', () => {
             ],
           },
           {},
-        );
+        )
 
         expect(result).toEqual({
           role: 'assistant',
@@ -1005,10 +1005,10 @@ describe('convertToLanguageModelMessage', () => {
               },
             },
           ],
-        });
-      });
-    });
-  });
+        })
+      })
+    })
+  })
 
   describe('tool message', () => {
     it('should convert basic tool result message', () => {
@@ -1025,7 +1025,7 @@ describe('convertToLanguageModelMessage', () => {
           ],
         },
         {},
-      );
+      )
 
       expect(result).toEqual({
         role: 'tool',
@@ -1037,8 +1037,8 @@ describe('convertToLanguageModelMessage', () => {
             toolName: 'toolName',
           },
         ],
-      });
-    });
+      })
+    })
 
     it('should convert tool result with provider metadata', () => {
       const result = convertToLanguageModelMessage(
@@ -1060,7 +1060,7 @@ describe('convertToLanguageModelMessage', () => {
           ],
         },
         {},
-      );
+      )
 
       expect(result).toEqual({
         role: 'tool',
@@ -1078,8 +1078,8 @@ describe('convertToLanguageModelMessage', () => {
             },
           },
         ],
-      });
-    });
+      })
+    })
 
     it('should include error flag', () => {
       const result = convertToLanguageModelMessage(
@@ -1096,7 +1096,7 @@ describe('convertToLanguageModelMessage', () => {
           ],
         },
         {},
-      );
+      )
 
       expect(result).toEqual({
         role: 'tool',
@@ -1109,8 +1109,8 @@ describe('convertToLanguageModelMessage', () => {
             isError: true,
           },
         ],
-      });
-    });
+      })
+    })
 
     it('should include multipart content', () => {
       const result = convertToLanguageModelMessage(
@@ -1129,7 +1129,7 @@ describe('convertToLanguageModelMessage', () => {
           ],
         },
         {},
-      );
+      )
 
       expect(result).toEqual({
         role: 'tool',
@@ -1144,7 +1144,7 @@ describe('convertToLanguageModelMessage', () => {
             ],
           },
         ],
-      });
-    });
-  });
-});
+      })
+    })
+  })
+})

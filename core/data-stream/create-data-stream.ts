@@ -21,6 +21,7 @@ export function createDataStream({
   function safeEnqueue(data: DataStreamString) {
     try {
       controller.enqueue(data)
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       // suppress errors when the stream has been closed
     }
@@ -44,6 +45,7 @@ export function createDataStream({
         ongoingStreamPromises.push(
           (async () => {
             const reader = streamArg.getReader()
+            // eslint-disable-next-line no-constant-condition
             while (true) {
               const { done, value } = await reader.read()
               if (done) break
@@ -72,6 +74,7 @@ export function createDataStream({
   // streams even after execute has returned, as long as there is still an
   // open merged stream. This is important to e.g. forward new streams and
   // from callbacks.
+  // eslint-disable-next-line no-async-promise-executor
   const waitForStreams: Promise<void> = new Promise(async (resolve) => {
     while (ongoingStreamPromises.length > 0) {
       await ongoingStreamPromises.shift()
@@ -82,6 +85,7 @@ export function createDataStream({
   waitForStreams.finally(() => {
     try {
       controller.close()
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       // suppress errors when the stream has been closed
     }

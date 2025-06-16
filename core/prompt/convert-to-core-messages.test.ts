@@ -1,28 +1,28 @@
-import { Attachment, Message } from '@ai-sdk/ui-utils';
-import { convertToCoreMessages } from './convert-to-core-messages';
-import { tool } from '../tool/tool';
-import { z } from 'zod';
-import { CoreMessage } from './message';
+import { Attachment, Message } from '@ai-sdk/ui-utils'
+import { convertToCoreMessages } from './convert-to-core-messages'
+import { tool } from '../tool/tool'
+import { z } from 'zod'
+import { CoreMessage } from './message'
 
 describe('convertToCoreMessages', () => {
   describe('system message', () => {
     it('should convert a simple system message', () => {
       const result = convertToCoreMessages([
         { role: 'system', content: 'System message' },
-      ]);
+      ])
 
-      expect(result).toEqual([{ role: 'system', content: 'System message' }]);
-    });
-  });
+      expect(result).toEqual([{ role: 'system', content: 'System message' }])
+    })
+  })
 
   describe('user message', () => {
     it('should convert a simple user message', () => {
       const result = convertToCoreMessages([
         { role: 'user', content: 'Hello, AI!' },
-      ]);
+      ])
 
-      expect(result).toEqual([{ role: 'user', content: 'Hello, AI!' }]);
-    });
+      expect(result).toEqual([{ role: 'user', content: 'Hello, AI!' }])
+    })
 
     it('should prefer content in parts when content is empty', () => {
       const result = convertToCoreMessages([
@@ -36,21 +36,21 @@ describe('convertToCoreMessages', () => {
             },
           ],
         },
-      ]);
+      ])
 
       expect(result).toEqual([
         {
           role: 'user',
           content: [{ type: 'text', text: 'hey, how is it going?' }],
         },
-      ]);
-    });
+      ])
+    })
 
     it('should handle user message with attachments', () => {
       const attachment: Attachment = {
         contentType: 'image/jpeg',
         url: 'https://example.com/image.jpg',
-      };
+      }
 
       const result = convertToCoreMessages([
         {
@@ -58,7 +58,7 @@ describe('convertToCoreMessages', () => {
           content: 'Check this image',
           experimental_attachments: [attachment],
         },
-      ]);
+      ])
 
       expect(result).toEqual([
         {
@@ -68,14 +68,14 @@ describe('convertToCoreMessages', () => {
             { type: 'image', image: new URL('https://example.com/image.jpg') },
           ],
         },
-      ]);
-    });
+      ])
+    })
 
     it('should handle user message with attachments (file)', () => {
       const attachment: Attachment = {
         contentType: 'application/pdf',
         url: 'https://example.com/document.pdf',
-      };
+      }
 
       const result = convertToCoreMessages([
         {
@@ -83,7 +83,7 @@ describe('convertToCoreMessages', () => {
           content: 'Check this document',
           experimental_attachments: [attachment],
         },
-      ]);
+      ])
 
       expect(result).toEqual([
         {
@@ -97,14 +97,14 @@ describe('convertToCoreMessages', () => {
             },
           ],
         },
-      ]);
-    });
+      ])
+    })
 
     it('should handle user message with attachment URLs', () => {
       const attachment: Attachment = {
         contentType: 'image/jpeg',
         url: 'data:image/jpg;base64,dGVzdA==',
-      };
+      }
 
       const result = convertToCoreMessages([
         {
@@ -112,16 +112,16 @@ describe('convertToCoreMessages', () => {
           content: 'Check this image',
           experimental_attachments: [attachment],
         },
-      ]);
+      ])
 
-      expect(result).toMatchSnapshot();
-    });
+      expect(result).toMatchSnapshot()
+    })
 
     it('should handle user message with attachment URLs (file)', () => {
       const attachment: Attachment = {
         contentType: 'application/pdf',
         url: 'data:application/pdf;base64,dGVzdA==',
-      };
+      }
 
       const result = convertToCoreMessages([
         {
@@ -129,16 +129,16 @@ describe('convertToCoreMessages', () => {
           content: 'Check this document',
           experimental_attachments: [attachment],
         },
-      ]);
+      ])
 
-      expect(result).toMatchSnapshot();
-    });
+      expect(result).toMatchSnapshot()
+    })
 
     it('should throw an error for invalid attachment URLs', () => {
       const attachment: Attachment = {
         contentType: 'image/jpeg',
         url: 'invalid-url',
-      };
+      }
 
       expect(() => {
         convertToCoreMessages([
@@ -147,14 +147,14 @@ describe('convertToCoreMessages', () => {
             content: 'Check this image',
             experimental_attachments: [attachment],
           },
-        ]);
-      }).toThrow('Invalid URL: invalid-url');
-    });
+        ])
+      }).toThrow('Invalid URL: invalid-url')
+    })
 
     it('should throw an error for file attachments without contentType', () => {
       const attachment: Attachment = {
         url: 'data:application/pdf;base64,dGVzdA==',
-      };
+      }
 
       expect(() => {
         convertToCoreMessages([
@@ -163,17 +163,17 @@ describe('convertToCoreMessages', () => {
             content: 'Check this file',
             experimental_attachments: [attachment],
           },
-        ]);
+        ])
       }).toThrow(
         'If the attachment is not an image or text, it must specify a content type',
-      );
-    });
+      )
+    })
 
     it('should throw an error for invalid data URL format', () => {
       const attachment: Attachment = {
         contentType: 'image/jpeg',
         url: 'data:image/jpg;base64',
-      };
+      }
 
       expect(() => {
         convertToCoreMessages([
@@ -182,15 +182,15 @@ describe('convertToCoreMessages', () => {
             content: 'Check this image',
             experimental_attachments: [attachment],
           },
-        ]);
-      }).toThrow(`Invalid data URL format: ${attachment.url}`);
-    });
+        ])
+      }).toThrow(`Invalid data URL format: ${attachment.url}`)
+    })
 
     it('should throw an error for unsupported attachment protocols', () => {
       const attachment: Attachment = {
         contentType: 'image/jpeg',
         url: 'ftp://example.com/image.jpg',
-      };
+      }
 
       expect(() => {
         convertToCoreMessages([
@@ -199,19 +199,19 @@ describe('convertToCoreMessages', () => {
             content: 'Check this image',
             experimental_attachments: [attachment],
           },
-        ]);
-      }).toThrow('Unsupported URL protocol: ftp:');
-    });
-  });
+        ])
+      }).toThrow('Unsupported URL protocol: ftp:')
+    })
+  })
 
   describe('assistant message', () => {
     it('should convert a simple assistant message', () => {
       const result = convertToCoreMessages([
         { role: 'assistant', content: 'Hello, human!' },
-      ]);
+      ])
 
-      expect(result).toEqual([{ role: 'assistant', content: 'Hello, human!' }]);
-    });
+      expect(result).toEqual([{ role: 'assistant', content: 'Hello, human!' }])
+    })
 
     it('should convert a simple assistant message (parts)', () => {
       const result = convertToCoreMessages([
@@ -220,15 +220,15 @@ describe('convertToCoreMessages', () => {
           content: '', // empty content
           parts: [{ type: 'text', text: 'Hello, human!' }],
         },
-      ]);
+      ])
 
       expect(result).toEqual([
         {
           role: 'assistant',
           content: [{ type: 'text', text: 'Hello, human!' }],
         },
-      ]);
-    });
+      ])
+    })
 
     it('should convert an assistant message with reasoning (parts)', () => {
       const result = convertToCoreMessages([
@@ -259,7 +259,7 @@ describe('convertToCoreMessages', () => {
             { type: 'text', text: 'Hello, human!' },
           ],
         },
-      ]);
+      ])
 
       expect(result).toEqual([
         {
@@ -271,8 +271,8 @@ describe('convertToCoreMessages', () => {
             { type: 'text', text: 'Hello, human!' },
           ],
         },
-      ] satisfies CoreMessage[]);
-    });
+      ] satisfies CoreMessage[])
+    })
 
     it('should convert an assistant message with file parts', () => {
       const result = convertToCoreMessages([
@@ -287,15 +287,15 @@ describe('convertToCoreMessages', () => {
             },
           ],
         },
-      ]);
+      ])
 
       expect(result).toEqual([
         {
           role: 'assistant',
           content: [{ type: 'file', mimeType: 'image/png', data: 'dGVzdA==' }],
         },
-      ] satisfies CoreMessage[]);
-    });
+      ] satisfies CoreMessage[])
+    })
 
     it('should handle assistant message with tool invocations', () => {
       const result = convertToCoreMessages([
@@ -312,10 +312,10 @@ describe('convertToCoreMessages', () => {
             },
           ],
         },
-      ]);
+      ])
 
-      expect(result).toMatchSnapshot();
-    });
+      expect(result).toMatchSnapshot()
+    })
 
     it('should handle assistant message with tool invocations (parts)', () => {
       const result = convertToCoreMessages([
@@ -338,21 +338,21 @@ describe('convertToCoreMessages', () => {
             },
           ],
         },
-      ]);
+      ])
 
-      expect(result).toMatchSnapshot();
-    });
+      expect(result).toMatchSnapshot()
+    })
 
     it('should handle assistant message with tool invocations that have multi-part responses', () => {
       const tools = {
         screenshot: tool({
           parameters: z.object({}),
           execute: async () => 'imgbase64',
-          experimental_toToolResultContent: result => [
+          experimental_toToolResultContent: (result) => [
             { type: 'image', data: result },
           ],
         }),
-      };
+      }
 
       const result = convertToCoreMessages(
         [
@@ -371,21 +371,21 @@ describe('convertToCoreMessages', () => {
           },
         ],
         { tools }, // separate tools to ensure that types are inferred correctly
-      );
+      )
 
-      expect(result).toMatchSnapshot();
-    });
+      expect(result).toMatchSnapshot()
+    })
 
     it('should handle assistant message with tool invocations that have multi-part responses (parts)', () => {
       const tools = {
         screenshot: tool({
           parameters: z.object({}),
           execute: async () => 'imgbase64',
-          experimental_toToolResultContent: result => [
+          experimental_toToolResultContent: (result) => [
             { type: 'image', data: result },
           ],
         }),
-      };
+      }
 
       const result = convertToCoreMessages(
         [
@@ -410,10 +410,10 @@ describe('convertToCoreMessages', () => {
           },
         ],
         { tools }, // separate tools to ensure that types are inferred correctly
-      );
+      )
 
-      expect(result).toMatchSnapshot();
-    });
+      expect(result).toMatchSnapshot()
+    })
 
     it('should handle conversation with an assistant message that has empty tool invocations', () => {
       const result = convertToCoreMessages([
@@ -427,10 +427,10 @@ describe('convertToCoreMessages', () => {
           content: 'text2',
           toolInvocations: [],
         },
-      ]);
+      ])
 
-      expect(result).toMatchSnapshot();
-    });
+      expect(result).toMatchSnapshot()
+    })
 
     it('should handle conversation with an assistant message that has empty tool invocations (parts)', () => {
       const result = convertToCoreMessages([
@@ -446,10 +446,10 @@ describe('convertToCoreMessages', () => {
           toolInvocations: [],
           parts: [{ type: 'text', text: 'text2' }],
         },
-      ]);
+      ])
 
-      expect(result).toMatchSnapshot();
-    });
+      expect(result).toMatchSnapshot()
+    })
 
     it('should handle conversation with multiple tool invocations that have step information', () => {
       const tools = {
@@ -457,7 +457,7 @@ describe('convertToCoreMessages', () => {
           parameters: z.object({ value: z.string() }),
           execute: async () => 'imgbase64',
         }),
-      };
+      }
 
       const result = convertToCoreMessages(
         [
@@ -502,10 +502,10 @@ describe('convertToCoreMessages', () => {
           },
         ],
         { tools }, // separate tools to ensure that types are inferred correctly
-      );
+      )
 
-      expect(result).toMatchSnapshot();
-    });
+      expect(result).toMatchSnapshot()
+    })
 
     it('should handle conversation with multiple tool invocations that have step information (parts)', () => {
       const tools = {
@@ -513,7 +513,7 @@ describe('convertToCoreMessages', () => {
           parameters: z.object({ value: z.string() }),
           execute: async () => 'imgbase64',
         }),
-      };
+      }
 
       const result = convertToCoreMessages(
         [
@@ -571,10 +571,10 @@ describe('convertToCoreMessages', () => {
           },
         ],
         { tools }, // separate tools to ensure that types are inferred correctly
-      );
+      )
 
-      expect(result).toMatchSnapshot();
-    });
+      expect(result).toMatchSnapshot()
+    })
 
     it('should handle conversation with mix of tool invocations and text (parts)', () => {
       const tools = {
@@ -582,7 +582,7 @@ describe('convertToCoreMessages', () => {
           parameters: z.object({ value: z.string() }),
           execute: async () => 'imgbase64',
         }),
-      };
+      }
 
       const result = convertToCoreMessages(
         [
@@ -642,11 +642,11 @@ describe('convertToCoreMessages', () => {
           },
         ],
         { tools }, // separate tools to ensure that types are inferred correctly
-      );
+      )
 
-      expect(result).toMatchSnapshot();
-    });
-  });
+      expect(result).toMatchSnapshot()
+    })
+  })
 
   describe('multiple messages', () => {
     it('should handle a conversation with multiple messages', () => {
@@ -654,14 +654,14 @@ describe('convertToCoreMessages', () => {
         { role: 'user', content: "What's the weather like?" },
         { role: 'assistant', content: "I'll check that for you." },
         { role: 'user', content: 'Thanks!' },
-      ]);
+      ])
 
       expect(result).toEqual([
         { role: 'user', content: "What's the weather like?" },
         { role: 'assistant', content: "I'll check that for you." },
         { role: 'user', content: 'Thanks!' },
-      ]);
-    });
+      ])
+    })
 
     it('should handle a conversation with multiple messages (parts)', () => {
       const result = convertToCoreMessages([
@@ -680,10 +680,10 @@ describe('convertToCoreMessages', () => {
           content: 'Thanks!',
           parts: [{ type: 'text', text: 'Thanks!' }],
         },
-      ]);
+      ])
 
-      expect(result).toMatchSnapshot();
-    });
+      expect(result).toMatchSnapshot()
+    })
 
     it('should convert fully typed Message[]', () => {
       const messages: Message[] = [
@@ -697,12 +697,12 @@ describe('convertToCoreMessages', () => {
           role: 'assistant',
           content: 'It is sunny in Tokyo.',
         },
-      ];
+      ]
 
-      const result = convertToCoreMessages(messages);
+      const result = convertToCoreMessages(messages)
 
-      expect(result).toMatchSnapshot();
-    });
+      expect(result).toMatchSnapshot()
+    })
 
     it('should handle conversation with multiple tool invocations and user message at the end', () => {
       const tools = {
@@ -710,7 +710,7 @@ describe('convertToCoreMessages', () => {
           parameters: z.object({ value: z.string() }),
           execute: async () => 'imgbase64',
         }),
-      };
+      }
 
       const result = convertToCoreMessages(
         [
@@ -759,10 +759,10 @@ describe('convertToCoreMessages', () => {
           },
         ],
         { tools }, // separate tools to ensure that types are inferred correctly
-      );
+      )
 
-      expect(result).toMatchSnapshot();
-    });
+      expect(result).toMatchSnapshot()
+    })
 
     it('should handle conversation with multiple tool invocations and user message at the end (parts)', () => {
       const tools = {
@@ -770,7 +770,7 @@ describe('convertToCoreMessages', () => {
           parameters: z.object({ value: z.string() }),
           execute: async () => 'imgbase64',
         }),
-      };
+      }
 
       const result = convertToCoreMessages(
         [
@@ -834,19 +834,20 @@ describe('convertToCoreMessages', () => {
           },
         ],
         { tools }, // separate tools to ensure that types are inferred correctly
-      );
+      )
 
-      expect(result).toMatchSnapshot();
-    });
-  });
+      expect(result).toMatchSnapshot()
+    })
+  })
 
   describe('error handling', () => {
     it('should throw an error for unhandled roles', () => {
       expect(() => {
         convertToCoreMessages([
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           { role: 'unknown' as any, content: 'unknown role message' },
-        ]);
-      }).toThrow('Unsupported role: unknown');
-    });
-  });
-});
+        ])
+      }).toThrow('Unsupported role: unknown')
+    })
+  })
+})

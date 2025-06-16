@@ -1,19 +1,21 @@
-import { ServerResponse } from 'node:http';
+import { ServerResponse } from 'node:http'
 
 class MockServerResponse {
-  writtenChunks: any[] = [];
-  headers = {};
-  statusCode = 0;
-  statusMessage = '';
-  ended = false;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  writtenChunks: any[] = []
+  headers = {}
+  statusCode = 0
+  statusMessage = ''
+  ended = false
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   write(chunk: any): void {
-    this.writtenChunks.push(chunk);
+    this.writtenChunks.push(chunk)
   }
 
   end(): void {
     // You might want to mark the response as ended to simulate the real behavior
-    this.ended = true;
+    this.ended = true
   }
 
   writeHead(
@@ -21,42 +23,42 @@ class MockServerResponse {
     statusMessage: string,
     headers: Record<string, string>,
   ): void {
-    this.statusCode = statusCode;
-    this.statusMessage = statusMessage;
-    this.headers = headers;
+    this.statusCode = statusCode
+    this.statusMessage = statusMessage
+    this.headers = headers
   }
 
   get body() {
     // Combine all written chunks into a single string
-    return this.writtenChunks.join('');
+    return this.writtenChunks.join('')
   }
 
   /**
    * Get the decoded chunks as strings.
    */
   getDecodedChunks() {
-    const decoder = new TextDecoder();
-    return this.writtenChunks.map(chunk => decoder.decode(chunk));
+    const decoder = new TextDecoder()
+    return this.writtenChunks.map((chunk) => decoder.decode(chunk))
   }
 
   /**
    * Wait for the stream to finish writing to the mock response.
    */
   async waitForEnd() {
-    await new Promise(resolve => {
+    await new Promise((resolve) => {
       const checkIfEnded = () => {
         if (this.ended) {
-          resolve(undefined);
+          resolve(undefined)
         } else {
-          setImmediate(checkIfEnded);
+          setImmediate(checkIfEnded)
         }
-      };
-      checkIfEnded();
-    });
+      }
+      checkIfEnded()
+    })
   }
 }
 
 export function createMockServerResponse(): ServerResponse &
   MockServerResponse {
-  return new MockServerResponse() as ServerResponse & MockServerResponse;
+  return new MockServerResponse() as ServerResponse & MockServerResponse
 }

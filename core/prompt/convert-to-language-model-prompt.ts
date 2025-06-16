@@ -295,6 +295,7 @@ function convertPartToLanguageModelPart(
   // is not a URL and likely some other sort of data.
   try {
     content = typeof data === 'string' ? new URL(data) : data
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
     content = data
   }

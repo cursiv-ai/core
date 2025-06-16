@@ -2,7 +2,7 @@ import {
   AssistantMessage,
   DataMessage,
   formatAssistantStreamPart,
-} from '@ai-sdk/ui-utils';
+} from '@ai-sdk/ui-utils'
 
 /**
 You can pass the thread and the latest message into the `AssistantResponse`. This establishes the context for the response.
@@ -11,13 +11,13 @@ type AssistantResponseSettings = {
   /**
 The thread ID that the response is associated with.
    */
-  threadId: string;
+  threadId: string
 
   /**
 The ID of the latest message that the response is associated with.
  */
-  messageId: string;
-};
+  messageId: string
+}
 
 /**
 The process parameter is a callback in which you can run the assistant on threads, and send messages and data messages to the client.
@@ -26,18 +26,19 @@ type AssistantResponseCallback = (options: {
   /**
 Forwards an assistant message (non-streaming) to the client.
    */
-  sendMessage: (message: AssistantMessage) => void;
+  sendMessage: (message: AssistantMessage) => void
 
   /**
 Send a data message to the client. You can use this to provide information for rendering custom UIs while the assistant is processing the thread.
  */
-  sendDataMessage: (message: DataMessage) => void;
+  sendDataMessage: (message: DataMessage) => void
 
   /**
 Forwards the assistant response stream to the client. Returns the `Run` object after it completes, or when it requires an action.
    */
-  forwardStream: (stream: any) => Promise<any | undefined>;
-}) => Promise<void>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  forwardStream: (stream: any) => Promise<any | undefined>
+}) => Promise<void>
 
 /**
 The `AssistantResponse` allows you to send a stream of assistant update to `useAssistant`.
@@ -50,32 +51,34 @@ export function AssistantResponse(
 ): Response {
   const stream = new ReadableStream({
     async start(controller) {
-      const textEncoder = new TextEncoder();
+      const textEncoder = new TextEncoder()
 
       const sendMessage = (message: AssistantMessage) => {
         controller.enqueue(
           textEncoder.encode(
             formatAssistantStreamPart('assistant_message', message),
           ),
-        );
-      };
+        )
+      }
 
       const sendDataMessage = (message: DataMessage) => {
         controller.enqueue(
           textEncoder.encode(
             formatAssistantStreamPart('data_message', message),
           ),
-        );
-      };
+        )
+      }
 
       const sendError = (errorMessage: string) => {
         controller.enqueue(
           textEncoder.encode(formatAssistantStreamPart('error', errorMessage)),
-        );
-      };
+        )
+      }
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const forwardStream = async (stream: any) => {
-        let result: any | undefined = undefined;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        let result: any | undefined = undefined
 
         for await (const value of stream) {
           switch (value.event) {
@@ -88,34 +91,34 @@ export function AssistantResponse(
                     content: [{ type: 'text', text: { value: '' } }],
                   }),
                 ),
-              );
-              break;
+              )
+              break
             }
 
             case 'thread.message.delta': {
-              const content = value.data.delta.content?.[0];
+              const content = value.data.delta.content?.[0]
 
               if (content?.type === 'text' && content.text?.value != null) {
                 controller.enqueue(
                   textEncoder.encode(
                     formatAssistantStreamPart('text', content.text.value),
                   ),
-                );
+                )
               }
 
-              break;
+              break
             }
 
             case 'thread.run.completed':
             case 'thread.run.requires_action': {
-              result = value.data;
-              break;
+              result = value.data
+              break
             }
           }
         }
 
-        return result;
-      };
+        return result
+      }
 
       // send the threadId and messageId as the first message:
       controller.enqueue(
@@ -125,28 +128,30 @@ export function AssistantResponse(
             messageId,
           }),
         ),
-      );
+      )
 
       try {
         await process({
           sendMessage,
           sendDataMessage,
           forwardStream,
-        });
+        })
       } catch (error) {
-        sendError((error as any).message ?? `${error}`);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        sendError((error as any).message ?? `${error}`)
       } finally {
-        controller.close();
+        controller.close()
       }
     },
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     pull(controller) {},
     cancel() {},
-  });
+  })
 
   return new Response(stream, {
     status: 200,
     headers: {
       'Content-Type': 'text/plain; charset=utf-8',
     },
-  });
+  })
 }

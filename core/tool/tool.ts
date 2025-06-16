@@ -1,33 +1,35 @@
-import { Schema } from '@ai-sdk/ui-utils';
-import { z } from 'zod';
-import { ToolResultContent } from '../prompt/tool-result-content';
-import { CoreMessage } from '../prompt/message';
+import { Schema } from '@ai-sdk/ui-utils'
+import { z } from 'zod'
+import { ToolResultContent } from '../prompt/tool-result-content'
+import { CoreMessage } from '../prompt/message'
 
-export type ToolParameters = z.ZodTypeAny | Schema<any>;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type ToolParameters = z.ZodTypeAny | Schema<any>
 
 export type inferParameters<PARAMETERS extends ToolParameters> =
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   PARAMETERS extends Schema<any>
     ? PARAMETERS['_type']
     : PARAMETERS extends z.ZodTypeAny
-      ? z.infer<PARAMETERS>
-      : never;
+    ? z.infer<PARAMETERS>
+    : never
 
 export interface ToolExecutionOptions {
   /**
    * The ID of the tool call. You can use it e.g. when sending tool-call related information with stream data.
    */
-  toolCallId: string;
+  toolCallId: string
 
   /**
    * Messages that were sent to the language model to initiate the response that contained the tool call.
    * The messages **do not** include the system prompt nor the assistant response that contained the tool call.
    */
-  messages: CoreMessage[];
+  messages: CoreMessage[]
 
   /**
    * An optional abort signal that indicates that the overall operation should be aborted.
    */
-  abortSignal?: AbortSignal;
+  abortSignal?: AbortSignal
 }
 
 /**
@@ -36,25 +38,26 @@ This enables the language model to generate the input.
 
 The tool can also contain an optional execute function for the actual execution function of the tool.
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type Tool<PARAMETERS extends ToolParameters = any, RESULT = any> = {
   /**
 The schema of the input that the tool expects. The language model will use this to generate the input.
 It is also used to validate the output of the language model.
 Use descriptions to make the input understandable for the language model.
    */
-  parameters: PARAMETERS;
+  parameters: PARAMETERS
 
   /**
 An optional description of what the tool does.
 Will be used by the language model to decide whether to use the tool.
 Not used for provider-defined tools.
    */
-  description?: string;
+  description?: string
 
   /**
 Optional conversion function that maps the tool result to multi-part tool content for LLMs.
    */
-  experimental_toToolResultContent?: (result: RESULT) => ToolResultContent;
+  experimental_toToolResultContent?: (result: RESULT) => ToolResultContent
 
   /**
 An async function that is called with the arguments from the tool call and produces a result.
@@ -66,40 +69,42 @@ If not provided, the tool will not be executed automatically.
   execute?: (
     args: inferParameters<PARAMETERS>,
     options: ToolExecutionOptions,
-  ) => PromiseLike<RESULT>;
+  ) => PromiseLike<RESULT>
 } & (
   | {
       /**
 Function tool.
        */
-      type?: undefined | 'function';
+      type?: undefined | 'function'
     }
   | {
       /**
 Provider-defined tool.
        */
-      type: 'provider-defined';
+      type: 'provider-defined'
 
       /**
 The ID of the tool. Should follow the format `<provider-name>.<tool-name>`.
        */
-      id: `${string}.${string}`;
+      id: `${string}.${string}`
 
       /**
 The arguments for configuring the tool. Must match the expected arguments defined by the provider for this tool.
        */
-      args: Record<string, unknown>;
+      args: Record<string, unknown>
     }
-);
+)
 
 /**
  * @deprecated Use `Tool` instead.
  */
 // TODO remove in v5
 export type CoreTool<
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   PARAMETERS extends ToolParameters = any,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   RESULT = any,
-> = Tool<PARAMETERS, RESULT>;
+> = Tool<PARAMETERS, RESULT>
 
 /**
 Helper function for inferring the execute args of a tool.
@@ -110,23 +115,24 @@ export function tool<PARAMETERS extends ToolParameters, RESULT>(
     execute: (
       args: inferParameters<PARAMETERS>,
       options: ToolExecutionOptions,
-    ) => PromiseLike<RESULT>;
+    ) => PromiseLike<RESULT>
   },
 ): Tool<PARAMETERS, RESULT> & {
   execute: (
     args: inferParameters<PARAMETERS>,
     options: ToolExecutionOptions,
-  ) => PromiseLike<RESULT>;
-};
+  ) => PromiseLike<RESULT>
+}
 export function tool<PARAMETERS extends ToolParameters, RESULT>(
   tool: Tool<PARAMETERS, RESULT> & {
-    execute?: undefined;
+    execute?: undefined
   },
 ): Tool<PARAMETERS, RESULT> & {
-  execute: undefined;
-};
+  execute: undefined
+}
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function tool<PARAMETERS extends ToolParameters, RESULT = any>(
   tool: Tool<PARAMETERS, RESULT>,
 ): Tool<PARAMETERS, RESULT> {
-  return tool;
+  return tool
 }

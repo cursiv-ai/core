@@ -1,6 +1,6 @@
-import { Message } from '@ai-sdk/ui-utils';
-import { standardizePrompt } from './standardize-prompt';
-import { CoreMessage } from './message';
+import { Message } from '@ai-sdk/ui-utils'
+import { standardizePrompt } from './standardize-prompt'
+import { CoreMessage } from './message'
 
 it('should throw InvalidPromptError when system message has parts', () => {
   expect(() => {
@@ -9,14 +9,15 @@ it('should throw InvalidPromptError when system message has parts', () => {
         messages: [
           {
             role: 'system',
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             content: [{ type: 'text', text: 'test' }] as any,
           },
         ],
       },
       tools: undefined,
-    });
-  }).toThrowErrorMatchingSnapshot();
-});
+    })
+  }).toThrowErrorMatchingSnapshot()
+})
 
 it('should throw InvalidPromptError when messages array is empty', () => {
   expect(() => {
@@ -25,38 +26,41 @@ it('should throw InvalidPromptError when messages array is empty', () => {
         messages: [],
       },
       tools: undefined,
-    });
+    })
   }).toThrowErrorMatchingInlineSnapshot(
     `[AI_InvalidPromptError: Invalid prompt: messages must not be empty]`,
-  );
-});
+  )
+})
 
 it('should throw error for invalid inputs', () => {
   expect(() =>
     standardizePrompt({
       prompt: {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         messages: null as any,
       },
       tools: undefined,
     }),
   ).toThrowErrorMatchingInlineSnapshot(
     `[AI_InvalidPromptError: Invalid prompt: prompt or messages must be defined]`,
-  );
+  )
 
   expect(() =>
     standardizePrompt({
       prompt: {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         messages: undefined as any,
       },
       tools: undefined,
     }),
   ).toThrowErrorMatchingInlineSnapshot(
     `[AI_InvalidPromptError: Invalid prompt: prompt or messages must be defined]`,
-  );
+  )
 
   expect(() =>
     standardizePrompt({
       prompt: {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         messages: 'not an array' as any,
       },
       tools: undefined,
@@ -64,7 +68,7 @@ it('should throw error for invalid inputs', () => {
   ).toThrowErrorMatchingInlineSnapshot(`
     [AI_InvalidPromptError: Invalid prompt: messages must be an array of CoreMessage or UIMessage
     Received non-array value: "not an array"]
-  `);
+  `)
 
   expect(() =>
     standardizePrompt({
@@ -73,6 +77,7 @@ it('should throw error for invalid inputs', () => {
           {
             role: 'system',
           },
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
         ] as any,
       },
       tools: undefined,
@@ -81,8 +86,8 @@ it('should throw error for invalid inputs', () => {
     [AI_InvalidPromptError: Invalid prompt: messages must be an array of CoreMessage or UIMessage
     Received message of type: "other" at index 0
     messages[0]: {"role":"system"}]
-  `);
-});
+  `)
+})
 
 it('should return empty array for empty arrays', () => {
   expect(() =>
@@ -94,8 +99,8 @@ it('should return empty array for empty arrays', () => {
     }),
   ).toThrowErrorMatchingInlineSnapshot(
     `[AI_InvalidPromptError: Invalid prompt: messages must not be empty]`,
-  );
-});
+  )
+})
 
 it('should filter UI messages with data role', () => {
   const messages: Omit<Message, 'id'>[] = [
@@ -107,7 +112,7 @@ it('should filter UI messages with data role', () => {
       role: 'user',
       content: 'some user content',
     },
-  ];
+  ]
 
   expect(
     standardizePrompt({
@@ -125,8 +130,8 @@ it('should filter UI messages with data role', () => {
       "system": undefined,
       "type": "messages",
     }
-  `);
-});
+  `)
+})
 
 it('should detect UI messages with toolInvocations', () => {
   const messages: Omit<Message, 'id'>[] = [
@@ -143,7 +148,7 @@ it('should detect UI messages with toolInvocations', () => {
         },
       ],
     },
-  ];
+  ]
   expect(
     standardizePrompt({
       prompt: { messages },
@@ -182,8 +187,8 @@ it('should detect UI messages with toolInvocations', () => {
       "system": undefined,
       "type": "messages",
     }
-  `);
-});
+  `)
+})
 
 it('should detect UI messages with experimental_attachments', () => {
   const messages: Omit<Message, 'id'>[] = [
@@ -194,7 +199,7 @@ it('should detect UI messages with experimental_attachments', () => {
         { contentType: 'image/png', url: 'https://test.com' },
       ],
     },
-  ];
+  ]
 
   expect(
     standardizePrompt({
@@ -221,8 +226,8 @@ it('should detect UI messages with experimental_attachments', () => {
       "system": undefined,
       "type": "messages",
     }
-  `);
-});
+  `)
+})
 
 it('should detect core messages with array content', () => {
   const messages: CoreMessage[] = [
@@ -230,7 +235,7 @@ it('should detect core messages with array content', () => {
       role: 'user',
       content: [{ type: 'text', text: 'Hello' }],
     },
-  ];
+  ]
   expect(
     standardizePrompt({
       prompt: { messages },
@@ -252,8 +257,8 @@ it('should detect core messages with array content', () => {
       "system": undefined,
       "type": "messages",
     }
-  `);
-});
+  `)
+})
 
 it('should detect core messages with providerOptions', () => {
   const messages: CoreMessage[] = [
@@ -262,7 +267,7 @@ it('should detect core messages with providerOptions', () => {
       content: 'System prompt',
       providerOptions: { provider: { test: 'value' } },
     },
-  ];
+  ]
   expect(
     standardizePrompt({
       prompt: { messages },
@@ -284,8 +289,8 @@ it('should detect core messages with providerOptions', () => {
       "system": undefined,
       "type": "messages",
     }
-  `);
-});
+  `)
+})
 
 it('should detect simple valid messages', () => {
   const messages: CoreMessage[] = [
@@ -301,7 +306,7 @@ it('should detect simple valid messages', () => {
       role: 'assistant',
       content: 'Hi there!',
     },
-  ];
+  ]
   expect(
     standardizePrompt({
       prompt: { messages },
@@ -326,10 +331,11 @@ it('should detect simple valid messages', () => {
       "system": undefined,
       "type": "messages",
     }
-  `);
-});
+  `)
+})
 
 it('should detect mixed core messages and simple messages as valid messages', () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const messages: any[] = [
     {
       role: 'system',
@@ -340,15 +346,15 @@ it('should detect mixed core messages and simple messages as valid messages', ()
       role: 'user',
       content: 'Hello',
     },
-  ];
+  ]
 
   expect(() =>
     standardizePrompt({
       prompt: { messages },
       tools: undefined,
     }),
-  ).toThrowErrorMatchingSnapshot();
-});
+  ).toThrowErrorMatchingSnapshot()
+})
 
 it('should detect UI messages with parts array', () => {
   const messages: Omit<Message, 'id'>[] = [
@@ -357,7 +363,7 @@ it('should detect UI messages with parts array', () => {
       content: 'Hello',
       parts: [{ type: 'text', text: 'Hello' }],
     },
-  ];
+  ]
 
   expect(
     standardizePrompt({
@@ -380,5 +386,5 @@ it('should detect UI messages with parts array', () => {
       "system": undefined,
       "type": "messages",
     }
-  `);
-});
+  `)
+})

@@ -1,11 +1,11 @@
-import { Attachment } from '@ai-sdk/ui-utils';
-import { FilePart, ImagePart, TextPart } from './content-part';
+import { Attachment } from '@ai-sdk/ui-utils'
+import { FilePart, ImagePart, TextPart } from './content-part'
 import {
   convertDataContentToUint8Array,
   convertUint8ArrayToText,
-} from './data-content';
+} from './data-content'
 
-type ContentPart = TextPart | ImagePart | FilePart;
+type ContentPart = TextPart | ImagePart | FilePart
 
 /**
  * Converts a list of attachments to a list of content parts
@@ -13,88 +13,90 @@ type ContentPart = TextPart | ImagePart | FilePart;
  * Currently only supports images and text attachments.
  */
 export function attachmentsToParts(attachments: Attachment[]): ContentPart[] {
-  const parts: ContentPart[] = [];
+  const parts: ContentPart[] = []
 
   for (const attachment of attachments) {
-    let url;
+    let url
 
     try {
-      url = new URL(attachment.url);
+      url = new URL(attachment.url)
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
-      throw new Error(`Invalid URL: ${attachment.url}`);
+      throw new Error(`Invalid URL: ${attachment.url}`)
     }
 
     switch (url.protocol) {
       case 'http:':
       case 'https:': {
         if (attachment.contentType?.startsWith('image/')) {
-          parts.push({ type: 'image', image: url });
+          parts.push({ type: 'image', image: url })
         } else {
           if (!attachment.contentType) {
             throw new Error(
               'If the attachment is not an image, it must specify a content type',
-            );
+            )
           }
 
           parts.push({
             type: 'file',
             data: url,
             mimeType: attachment.contentType,
-          });
+          })
         }
-        break;
+        break
       }
 
       case 'data:': {
-        let header;
-        let base64Content;
-        let mimeType;
+        let header
+        let base64Content
+        let mimeType
 
         try {
-          [header, base64Content] = attachment.url.split(',');
-          mimeType = header.split(';')[0].split(':')[1];
+          ;[header, base64Content] = attachment.url.split(',')
+          mimeType = header.split(';')[0].split(':')[1]
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (error) {
-          throw new Error(`Error processing data URL: ${attachment.url}`);
+          throw new Error(`Error processing data URL: ${attachment.url}`)
         }
 
         if (mimeType == null || base64Content == null) {
-          throw new Error(`Invalid data URL format: ${attachment.url}`);
+          throw new Error(`Invalid data URL format: ${attachment.url}`)
         }
 
         if (attachment.contentType?.startsWith('image/')) {
           parts.push({
             type: 'image',
             image: convertDataContentToUint8Array(base64Content),
-          });
+          })
         } else if (attachment.contentType?.startsWith('text/')) {
           parts.push({
             type: 'text',
             text: convertUint8ArrayToText(
               convertDataContentToUint8Array(base64Content),
             ),
-          });
+          })
         } else {
           if (!attachment.contentType) {
             throw new Error(
               'If the attachment is not an image or text, it must specify a content type',
-            );
+            )
           }
 
           parts.push({
             type: 'file',
             data: base64Content,
             mimeType: attachment.contentType,
-          });
+          })
         }
 
-        break;
+        break
       }
 
       default: {
-        throw new Error(`Unsupported URL protocol: ${url.protocol}`);
+        throw new Error(`Unsupported URL protocol: ${url.protocol}`)
       }
     }
   }
 
-  return parts;
+  return parts
 }

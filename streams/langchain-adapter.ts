@@ -1,51 +1,51 @@
-import { formatDataStreamPart } from '@ai-sdk/ui-utils';
-import { DataStreamWriter } from '../core/data-stream/data-stream-writer';
-import { mergeStreams } from '../core/util/merge-streams';
-import { prepareResponseHeaders } from '../core/util/prepare-response-headers';
-import {
-  createCallbacksTransformer,
-  StreamCallbacks,
-} from './stream-callbacks';
-import { StreamData } from './stream-data';
+import { formatDataStreamPart } from '@ai-sdk/ui-utils'
+import { DataStreamWriter } from '../core/data-stream/data-stream-writer'
+import { mergeStreams } from '../core/util/merge-streams'
+import { prepareResponseHeaders } from '../core/util/prepare-response-headers'
+import { createCallbacksTransformer, StreamCallbacks } from './stream-callbacks'
+import { StreamData } from './stream-data'
 
-type LangChainImageDetail = 'auto' | 'low' | 'high';
+type LangChainImageDetail = 'auto' | 'low' | 'high'
 
 type LangChainMessageContentText = {
-  type: 'text';
-  text: string;
-};
+  type: 'text'
+  text: string
+}
 
 type LangChainMessageContentImageUrl = {
-  type: 'image_url';
+  type: 'image_url'
   image_url:
     | string
     | {
-        url: string;
-        detail?: LangChainImageDetail;
-      };
-};
+        url: string
+        detail?: LangChainImageDetail
+      }
+}
 
 type LangChainMessageContentComplex =
   | LangChainMessageContentText
   | LangChainMessageContentImageUrl
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   | (Record<string, any> & {
-      type?: 'text' | 'image_url' | string;
+      type?: 'text' | 'image_url' | string
     })
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   | (Record<string, any> & {
-      type?: never;
-    });
+      type?: never
+    })
 
-type LangChainMessageContent = string | LangChainMessageContentComplex[];
+type LangChainMessageContent = string | LangChainMessageContentComplex[]
 
 type LangChainAIMessageChunk = {
-  content: LangChainMessageContent;
-};
+  content: LangChainMessageContent
+}
 
 // LC stream event v2
 type LangChainStreamEvent = {
-  event: string;
-  data: any;
-};
+  event: string
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data: any
+}
 
 function toDataStreamInternal(
   stream:
@@ -62,8 +62,8 @@ function toDataStreamInternal(
         transform: async (value, controller) => {
           // text stream:
           if (typeof value === 'string') {
-            controller.enqueue(value);
-            return;
+            controller.enqueue(value)
+            return
           }
 
           // LC stream events v2:
@@ -73,13 +73,13 @@ function toDataStreamInternal(
               forwardAIMessageChunk(
                 value.data?.chunk as LangChainAIMessageChunk,
                 controller,
-              );
+              )
             }
-            return;
+            return
           }
 
           // AI Message chunk stream:
-          forwardAIMessageChunk(value, controller);
+          forwardAIMessageChunk(value, controller)
         },
       }),
     )
@@ -88,10 +88,10 @@ function toDataStreamInternal(
     .pipeThrough(
       new TransformStream({
         transform: async (chunk, controller) => {
-          controller.enqueue(formatDataStreamPart('text', chunk));
+          controller.enqueue(formatDataStreamPart('text', chunk))
         },
       }),
-    );
+    )
 }
 
 /**
@@ -110,7 +110,7 @@ export function toDataStream(
 ) {
   return toDataStreamInternal(stream, callbacks).pipeThrough(
     new TextEncoderStream(),
-  );
+  )
 }
 
 export function toDataStreamResponse(
@@ -119,21 +119,21 @@ export function toDataStreamResponse(
     | ReadableStream<LangChainAIMessageChunk>
     | ReadableStream<string>,
   options?: {
-    init?: ResponseInit;
-    data?: StreamData;
-    callbacks?: StreamCallbacks;
+    init?: ResponseInit
+    data?: StreamData
+    callbacks?: StreamCallbacks
   },
 ) {
   const dataStream = toDataStreamInternal(
     stream,
     options?.callbacks,
-  ).pipeThrough(new TextEncoderStream());
-  const data = options?.data;
-  const init = options?.init;
+  ).pipeThrough(new TextEncoderStream())
+  const data = options?.data
+  const init = options?.init
 
   const responseStream = data
     ? mergeStreams(data.stream, dataStream)
-    : dataStream;
+    : dataStream
 
   return new Response(responseStream, {
     status: init?.status ?? 200,
@@ -142,7 +142,7 @@ export function toDataStreamResponse(
       contentType: 'text/plain; charset=utf-8',
       dataStreamVersion: 'v1',
     }),
-  });
+  })
 }
 
 export function mergeIntoDataStream(
@@ -152,20 +152,21 @@ export function mergeIntoDataStream(
     | ReadableStream<string>,
   options: { dataStream: DataStreamWriter; callbacks?: StreamCallbacks },
 ) {
-  options.dataStream.merge(toDataStreamInternal(stream, options.callbacks));
+  options.dataStream.merge(toDataStreamInternal(stream, options.callbacks))
 }
 
 function forwardAIMessageChunk(
   chunk: LangChainAIMessageChunk,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   controller: TransformStreamDefaultController<any>,
 ) {
   if (typeof chunk.content === 'string') {
-    controller.enqueue(chunk.content);
+    controller.enqueue(chunk.content)
   } else {
-    const content: LangChainMessageContentComplex[] = chunk.content;
+    const content: LangChainMessageContentComplex[] = chunk.content
     for (const item of content) {
       if (item.type === 'text') {
-        controller.enqueue(item.text);
+        controller.enqueue(item.text)
       }
     }
   }

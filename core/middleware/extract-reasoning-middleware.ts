@@ -130,6 +130,7 @@ export function extractReasoningMiddleware({
                   buffer = buffer.slice(startIndex)
                   break
                 }
+                // eslint-disable-next-line no-constant-condition
               } while (true)
             },
           }),

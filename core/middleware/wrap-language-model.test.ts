@@ -217,6 +217,7 @@ describe('wrapLanguageModel', () => {
 
       private readonly value = true
 
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       supportsUrl(url: URL) {
         supportsUrlCalled = true
         // Reference 'this' to verify context
@@ -351,12 +352,14 @@ describe('wrapLanguageModel', () => {
 
       const wrapGenerate1 = vi
         .fn()
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         .mockImplementation(async ({ doGenerate, params, model }) => {
           const result = await doGenerate()
           return `wrapGenerate1(${result})`
         })
       const wrapGenerate2 = vi
         .fn()
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         .mockImplementation(async ({ doGenerate, params, model }) => {
           const result = await doGenerate()
           return `wrapGenerate2(${result})`
@@ -397,12 +400,14 @@ describe('wrapLanguageModel', () => {
 
       const wrapStream1 = vi
         .fn()
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         .mockImplementation(async ({ doStream, params, model }) => {
           const result = await doStream()
           return `wrapStream1(${result})`
         })
       const wrapStream2 = vi
         .fn()
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         .mockImplementation(async ({ doStream, params, model }) => {
           const result = await doStream()
           return `wrapStream2(${result})`
