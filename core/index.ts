@@ -32,11 +32,8 @@ export type {
 } from '@ai-sdk/ui-utils'
 
 // directory exports:
-export * from './data-stream'
 export * from './generate-text'
-export * from './middleware'
 export * from './prompt'
-export * from './registry'
 export * from './tool'
 export * from './types'
 
