@@ -1,0 +1,36 @@
+{
+  "name": "ai-provider-library",
+  "version": "0.1.0",
+  "description": "A simple AI provider library with lifecycle hooks",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "example:openai-simple": "npm run build && node dist/examples/openai-simple.js",
+    "example:anthropic-simple": "npm run build && node dist/examples/anthropic-simple.js",
+    "example:openai-streaming": "npm run build && node dist/examples/openai-streaming.js",
+    "example:openai-multimodal": "npm run build && node dist/examples/openai-multimodal.js"
+  },
+  "keywords": [
+    "ai",
+    "llm",
+    "openai",
+    "anthropic",
+    "sdk"
+  ],
+  "author": "AI Assistant",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "@types/node": "^20.0.0",
+    "dotenv": "^16.3.1"
+  },
+  "dependencies": {
+    "node-fetch": "^2.6.7"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
