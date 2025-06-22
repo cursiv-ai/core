@@ -1,0 +1,65 @@
+{
+  "name": "@cursiv-ai/core",
+  "version": "0.0.1",
+  "description": "Cursiv AI Core",
+  "license": "Apache-2.0",
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/**/*",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "build:watch": "tsup --watch",
+    "clean": "rm -rf dist",
+    "lint": "eslint \"./**/*.ts*\"",
+    "type-check": "tsc --noEmit",
+    "prettier-check": "prettier --check \"./**/*.ts*\"",
+    "test": "pnpm test:node && pnpm test:edge",
+    "test:edge": "vitest --config vitest.edge.config.js --run",
+    "test:edge:watch": "vitest --config vitest.edge.config.js",
+    "test:node": "vitest --config vitest.node.config.js --run",
+    "test:node:watch": "vitest --config vitest.node.config.js",
+    "tsx": "tsx"
+  },
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "devDependencies": {
+    "@eslint/js": "9.29.0",
+    "@types/node": "20.17.24",
+    "@vitest/eslint-plugin": "1.2.5",
+    "eslint": "9.29.0",
+    "tsup": "8.5.0",
+    "tsx": "4.20.3",
+    "typescript": "5.6.3",
+    "typescript-eslint": "8.34.0",
+    "vitest": "3.2.3",
+    "zod": "3.23.8"
+  },
+  "peerDependencies": {
+    "zod": "^3.23.8"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "homepage": "todo",
+  "repository": {
+    "type": "git",
+    "url": "todo"
+  },
+  "bugs": {
+    "url": "todo"
+  },
+  "keywords": [
+    "ai"
+  ]
+}

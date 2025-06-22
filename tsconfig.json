@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "TypeScript Library",
+  "compilerOptions": {
+    "composite": false,
+    "declaration": true,
+    "declarationMap": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "inlineSources": false,
+    "isolatedModules": true,
+    "moduleResolution": "bundler",
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "preserveWatchOutput": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "types": ["node", "vitest/globals"],
+    "lib": ["ES2020", "DOM"],
+    "module": "ESNext",
+    "target": "ES2020",
+    "stripInternal": true
+  },
+  "include": ["."],
+  "exclude": ["*/dist", "dist", "build", "node_modules"]
+}

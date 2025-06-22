@@ -1,0 +1,6 @@
+node_modules
+dist
+
+TODO.md
+
+core/generate-text/test-generate.ts
